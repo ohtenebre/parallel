@@ -61,12 +61,12 @@ std::vector<double> dot_block(std::span<const double> m1, std::span<const double
 int main()
 {
     // Init
-    size_t m = 1000;
-    size_t l = 1000;
-    size_t n = 1000;
+    size_t m = 1500;
+    size_t l = 1500;
+    size_t n = 1500;
 
-    int len_k = 20;
-    int block_size = 32;
+    int len_k = 128;
+    int block_size = 64;
 
     std::vector<double> m1(m * l, 0.0);
     std::vector<double> m2(l * n, 0.0);

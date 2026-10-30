@@ -58,6 +58,22 @@ std::vector<double> dot_block(std::span<const double> m1, std::span<const double
     return result;
 }
 
+bool check_equality(std::span<const double> v1, std::span<const double> v2)
+{
+    if (v1.size() != v2.size())
+        return false;
+
+    constexpr double eps = 1e-3;
+
+    for (size_t i = 0; i < v1.size(); ++i)
+        if (std::abs(v1[i] - v2[i]) > eps)
+        {
+            std::cerr << "Mismatch at index " << i << ": " << v1[i] << " != " << v2[i] << "\n";
+            return false;
+        }
+    return true;
+}
+
 int main()
 {
     // Init
@@ -89,12 +105,13 @@ int main()
     auto out = std::ofstream("bin/stat.csv");
     if (!out.is_open())
         return 1;
-    out << "Threads,Time_lent,Time_blocks\n";
+    out << "Threads,Time_lent,Time_blocks,Res\n";
 
     for (const int &t_c : thread_count)
     {
         double log_time_sum1 = 0.0;
         double log_time_sum2 = 0.0;
+
         for (size_t run_c = 0; run_c < RUNS; ++run_c)
         {
             omp_set_num_threads(t_c);
@@ -111,6 +128,14 @@ int main()
 
             log_time_sum1 += std::log(static_cast<double>(dur_r.count()));
             log_time_sum2 += std::log(static_cast<double>(dur_c.count()));
+
+            if (check_equality(std::span(res_r), std::span(res_c)))
+                continue;
+            else
+            {
+                std::cout << "Mismatch!!!\n";
+                return 1;
+            }
         }
 
         double mean1 = std::exp(log_time_sum1 / RUNS);

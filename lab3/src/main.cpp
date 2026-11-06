@@ -105,7 +105,7 @@ int main()
     auto out = std::ofstream("bin/stat.csv");
     if (!out.is_open())
         return 1;
-    out << "Threads,Time_lent,Time_blocks,Res\n";
+    out << "Threads,Time_lent,Time_blocks\n";
 
     for (const int &t_c : thread_count)
     {
